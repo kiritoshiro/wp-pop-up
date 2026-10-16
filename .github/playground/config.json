@@ -1,0 +1,29 @@
+{
+  "mounts": [
+    {
+      "host": ".",
+      "vfs": "/wordpress/wp-content/plugins/wp-pop-up"
+    }
+  ],
+  "setup": [
+    {
+      "step": "runPHP",
+      "code": "<?php require '/wordpress/wp-load.php'; update_option('wppu_settings', ['display' => 'all']);"
+    }
+  ],
+  "plugins": [
+    "wp-pop-up/wp-pop-up.php"
+  ],
+  "watch": [
+    "/wordpress/wp-content/plugins/wp-pop-up/"
+  ],
+  "fixture": "<!-- wp:paragraph --><p>Pop-up smoke test page.</p><!-- /wp:paragraph -->",
+  "expect": [
+    "window.wppuConfig = ",
+    "wp-pop-up/assets/js/popup.js",
+    "wp-pop-up/assets/css/popup.css"
+  ],
+  "paths": [
+    "/?wppu_preview=1"
+  ]
+}

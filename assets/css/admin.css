@@ -1,0 +1,25 @@
+/* Settings → Pop-up screen. */
+
+.wppu-settings .wppu-image-preview img {
+	display: block;
+	max-width: 320px;
+	max-height: 240px;
+	margin-bottom: 8px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.wppu-settings .wppu-pages {
+	max-height: 220px;
+	max-width: 480px;
+	margin-top: 8px;
+	padding: 8px 12px;
+	overflow: auto;
+	border: 1px solid #c3c4c7;
+	background: #fff;
+}
+
+.wppu-settings .wppu-pages label {
+	display: block;
+	margin: 4px 0;
+}

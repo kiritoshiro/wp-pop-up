@@ -1,0 +1,66 @@
+name: Build plugin release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+jobs:
+  # The whole security gate must pass on the released commit before the ZIP
+  # is built and attached.
+  security-gate:
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/security-gate.yml
+  package:
+    permissions:
+      contents: write
+    needs: security-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # The tag must be vX.Y.Z, match the plugin header, the VERSION constant
+      # and readme.txt's stable tag, and point at a commit on main.
+      - name: Check release tag, version and main ancestry
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Tag $TAG is not vX.Y.Z"; exit 1; }
+          grep -Eq "^ \* Version: +${version//./\.}$" wp-pop-up.php || { echo "::error::Plugin header Version is not $version"; exit 1; }
+          grep -Fq "const VERSION = '$version';" wp-pop-up.php || { echo "::error::VERSION constant is not $version"; exit 1; }
+          grep -Fqx "Stable tag: $version" readme.txt || { echo "::error::readme.txt Stable tag is not $version"; exit 1; }
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "::error::$TAG is not on main"; exit 1; }
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      # SWC and lightningcss, pinned in package-lock.json; used only to minify
+      # the package. Nothing from node_modules is copied into the ZIP.
+      - name: Install the minifiers
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build WordPress plugin ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/wp-pop-up
+          cp -R wp-pop-up.php includes assets readme.txt uninstall.php dist/wp-pop-up/
+          # Minify the packaged scripts and styles; the repository keeps the
+          # sources. A failure here fails the release instead of shipping
+          # unminified files.
+          node scripts/minify-package-assets.mjs dist/wp-pop-up
+          (cd dist && zip -r -X wp-pop-up.zip wp-pop-up && sha256sum wp-pop-up.zip > wp-pop-up.zip.sha256)
+          unzip -l dist/wp-pop-up.zip
+      - name: Attach ZIP to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" dist/wp-pop-up.zip dist/wp-pop-up.zip.sha256 --clobber

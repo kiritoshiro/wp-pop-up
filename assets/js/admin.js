@@ -11,9 +11,15 @@
 		var frame;
 
 		function showPreview(src) {
-			$preview.empty();
-			if (src) {
-				$('<img>', { src: src, alt: '' }).appendTo($preview);
+			var box = $preview.get(0);
+			while (box.firstChild) {
+				box.removeChild(box.firstChild);
+			}
+			if (src && /^https?:\/\//i.test(src)) {
+				var img = document.createElement('img');
+				img.alt = '';
+				img.src = src;
+				box.appendChild(img);
 			}
 		}
 
@@ -49,7 +55,7 @@
 		// A typed URL replaces the media-library choice.
 		$url.on('change', function () {
 			$id.val('0');
-			showPreview(/^https?:\/\//i.test($url.val()) ? $url.val() : '');
+			showPreview($url.val());
 		});
 
 		var $display = $('input[name$="[display]"]');

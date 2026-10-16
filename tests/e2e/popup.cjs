@@ -85,8 +85,16 @@ async function setPages(admin, titles) {
 	await admin.click('.media-modal .media-button-select');
 	const pickedId = await admin.inputValue('#wppu-image-id');
 	check('media library pick fills the image', Number(pickedId) > 0 && (await admin.inputValue('#wppu-image-url')).includes('/uploads/'));
+	check('media library pick updates the preview', ((await admin.getAttribute('#wppu-image-preview img', 'src')) || '').includes('/uploads/'));
 	await Promise.all([admin.waitForNavigation(), admin.click('#submit')]);
 	check('picked image is saved', (await admin.inputValue('#wppu-image-id')) === pickedId);
+	await admin.fill('#wppu-image-url', 'javascript:alert(1)');
+	await admin.dispatchEvent('#wppu-image-url', 'change');
+	check('typed non-http URL shows no preview', (await admin.locator('#wppu-image-preview img').count()) === 0);
+	await admin.fill('#wppu-image-url', IMAGE);
+	await admin.dispatchEvent('#wppu-image-url', 'change');
+	check('typed URL shows a preview and clears the media choice', (await admin.getAttribute('#wppu-image-preview img', 'src')) === IMAGE
+		&& (await admin.inputValue('#wppu-image-id')) === '0');
 
 	await save(admin, {
 		enabled: 1, image_id: 0, image_url: IMAGE, image_alt: 'Kvietimas paremti', link_url: 'https://example.org/parama/',

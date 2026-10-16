@@ -93,8 +93,9 @@ async function setPages(admin, titles) {
 	check('typed non-http URL shows no preview', (await admin.locator('#wppu-image-preview img').count()) === 0);
 	await admin.fill('#wppu-image-url', IMAGE);
 	await admin.dispatchEvent('#wppu-image-url', 'change');
-	check('typed URL shows a preview and clears the media choice', (await admin.getAttribute('#wppu-image-preview img', 'src')) === IMAGE
-		&& (await admin.inputValue('#wppu-image-id')) === '0');
+	check('typed URL clears the media choice', (await admin.inputValue('#wppu-image-id')) === '0');
+	await Promise.all([admin.waitForNavigation(), admin.click('#submit')]);
+	check('typed URL is previewed after saving', (await admin.getAttribute('#wppu-image-preview img', 'src')) === IMAGE);
 
 	await save(admin, {
 		enabled: 1, image_id: 0, image_url: IMAGE, image_alt: 'Kvietimas paremti', link_url: 'https://example.org/parama/',

@@ -52,10 +52,12 @@
 			showPreview('');
 		});
 
-		// A typed URL replaces the media-library choice.
+		// A typed URL replaces the media-library choice. Its preview appears
+		// after saving (rendered and escaped by PHP), so typed text never
+		// becomes an image source here.
 		$url.on('change', function () {
 			$id.val('0');
-			showPreview($url.val());
+			showPreview('');
 		});
 
 		var $display = $('input[name$="[display]"]');

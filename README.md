@@ -30,6 +30,8 @@ The front end loads only where the pop-up may appear. Dates, device and "already
 
 The plugin checks the latest published, non-prerelease release in this public repository and offers it on the normal WordPress update screens. No token is needed.
 
+WordPress installs the downloaded `wp-pop-up.zip` only when its SHA-256 matches the `digest` that GitHub's release API reports for that asset; a release asset without a digest is not offered, and a mismatch stops the update. The download may only redirect to GitHub's release-asset hosts.
+
 A token is optional. A fine-grained GitHub personal access token with **Contents: Read** access to this repository raises the GitHub API rate limit. Add it to wp-config.php, before the “That's all, stop editing” line:
 
     define( 'WP_POP_UP_GITHUB_TOKEN', 'github_pat_...' );

@@ -33,5 +33,8 @@ Atnaujinimai ateina iš GitHub leidimų (https://github.com/kiritoshiro/wp-pop-u
 
 == Changelog ==
 
+= Neišleista =
+* Saugumas: atnaujinimas įdiegiamas tik tada, kai atsisiųsto paketo SHA-256 sutampa su GitHub leidimo API pateikiamu paketo kontroliniu kodu (digest). Leidimas be kontrolinio kodo nesiūlomas, o nesutapus kodui atnaujinimas sustabdomas. Atsisiuntimas leidžiamas tik iš GitHub leidimų failų serverių.
+
 = 1.0.0 =
 * Pirmasis leidimas: iššokantis langas su paveikslėliu ir nustatymų puslapiu (paveikslėlis, nuoroda, puslapiai, dažnumas, delsa, laikotarpis, įrenginiai, išvaizda), peržiūra administratoriams, atnaujinimai iš GitHub leidimų.

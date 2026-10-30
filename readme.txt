@@ -4,7 +4,7 @@ Tags: popup, banner, modal, image, campaign
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 
 Iššokantis langas su paveikslėliu (pvz., kampanijos reklama), nustatomas Nustatymai → Pop-up.
@@ -33,7 +33,7 @@ Atnaujinimai ateina iš GitHub leidimų (https://github.com/kiritoshiro/wp-pop-u
 
 == Changelog ==
 
-= Neišleista =
+= 1.0.1 =
 * Saugumas: atnaujinimas įdiegiamas tik tada, kai atsisiųsto paketo SHA-256 sutampa su GitHub leidimo API pateikiamu paketo kontroliniu kodu (digest). Leidimas be kontrolinio kodo nesiūlomas, o nesutapus kodui atnaujinimas sustabdomas. Atsisiuntimas leidžiamas tik iš GitHub leidimų failų serverių.
 
 = 1.0.0 =
